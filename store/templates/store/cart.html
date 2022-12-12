@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="pt-3 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-2 col-2"></div>
+                <div class="col-lg-8 col-md-8 col-8">
+                    <h3 class="display-6 mb-2 text-center">Shopping Cart</h3>
+                    <p class="mb-3 text-center">
+                        {{ orders|length }} item(s) in your cart
+                    </p>
+                    <table class="table table-condensed table-responsive">
+                        <thead>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-9 mt-sm-2">
+                                        <p class="center"><b>Product</b></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mt-sm-2">
+                                    <p class="text-center"><b>Price</b></p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mt-sm-2">
+                                    <p class="text-center"><b>Quantity</b></p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mt-sm-2">
+                                    <p class="text-center"><b>Actions</b></p>
+                                </div>
+                            </td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td data-th="Product">
+                                    <div class="row">
+                                        <div class="col-md-3 text-left">
+                                            <img width="30" height="30" src="{{ order.product.picture.url }}" alt=""
+                                                 class="img-fluid d-none d-md-block rounded mb-2 shadow ">
+                                        </div>
+                                        <div class="col-md-9 mt-sm-2">
+                                            {{ order.product.name }}{{ org }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-th="Price">
+                                    <div class="mt-sm-2">
+                                        <p class="text-center">${{ order.product.price }}</p>
+                                    </div>
+                                </td>
+                                <td data-th="Quantity">
+                                    <div class="mt-sm-2">
+                                        <p class="text-center">{{ order.quantity }}</p>
+                                    </div>
+                                </td>
+                                <td class="actions">
+                                    <div class="mt-sm-2 text-center">
+                                        <a href="{% url 'delete-product-to-cart' order.product.slug %}" class="btn btn-outline-danger btn-sm btn-md mb-2">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-6 text-muted">
+                            Subtotal: $99.99
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-6 d-flex flex-row-reverse">
+                            <a href="#" class="btn btn-sm btn-primary">Checkout</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-2"></div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <main class="form-signin w-100 m-auto">
+        <form class="text-center" method="POST">
+            {% csrf_token %}
+            <img class="mb-4" src="{% static 'ico/cactus.ico' %}" alt="" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal">Please Sign-Up</h1>
+            <p>Already have an account  ? <a href="{% url 'login' %}">Login</a></p>
+
+            <div class="form-floating">
+                <input type="username" autocomplete="off" name="username" value="" class="form-control mb-1"
+                       id="username" placeholder="Username">
+                <label for="username">Username</label>
+            </div>
+            <div class="form-floating">
+                <input type="email" autocomplete="off" name="email" value="" class="form-control mb-1" id="email"
+                       placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" autocomplete="off" name="password" value="" class="form-control" id="password"
+                       placeholder="Password">
+                <label for="password">Password</label>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign Up</button>
+        </form>
+    </main>
+
+{% endblock %}
