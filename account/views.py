@@ -25,6 +25,9 @@ def login_user(request):
         if user:
             login(request, user)
             return redirect('index')
+        else:
+            error = True
+            return render(request, 'account/login.html', context={"error": error})
 
     return render(request, 'account/login.html')
 
@@ -52,6 +55,7 @@ def account_order(request):
 
 def account_return(request):
     return render(request, 'account/user_return.html')
+
 
 def add_new_adress(request):
     if request.method == "POST":
