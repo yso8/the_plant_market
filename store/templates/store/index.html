@@ -2,77 +2,38 @@
 {% block content %}
 
     <div class="container">
-        <div class="row">
-            {% for product in products|slice:"0:3" %}
-                <div class="col">
-                    <div class="card mt-4">
-                        <a href="{{ product.get_absolute_url }}">
-                            <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="card-img-top">
-                        </a>
-                        <div class="card-body">
-                            <a class="text-dark decoration-none" href="{{ product.get_absolute_url }}">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                            </a>
-                            <p class="card-text"><small class="text-muted">{{ product.price }}$</small></p>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-foot">
-                                <a href="{% url 'index-add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
-                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-suit-heart-fill"></i>&nbsp; To Favorite</button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
 
-    <div class="container">
         <div class="row">
-            {% for product in products|slice:"3:6" %}
-                <div class="col">
-                    <div class="card mt-4">
-                        <a href="{{ product.get_absolute_url }}">
-                            <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="card-img-top">
-                        </a>
-                        <div class="card-body">
-                            <a class="text-dark decoration-none" href="{{ product.get_absolute_url }}">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                            </a>
-                            <p class="card-text"><small class="text-muted">{{ product.price }}$</small></p>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-foot">
-                                <a href="{% url 'index-add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
-                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-suit-heart-fill"></i>&nbsp; To Favorite</button>
-                            </p>
+            <div class="col-2">
+                <h5> Filter : </h5>
+                {% for filter in filters %}
+                    {{ filter }}
+                {% endfor %}
+            </div>
+            <div class="col-10">
+                <div class="row">
+                    {% for product in products|slice:"0:3" %}
+                        <div class="col">
+                            <div class="card mt-4">
+                                <a href="{{ product.get_absolute_url }}">
+                                    <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="card-img-top">
+                                </a>
+                                <div class="card-body">
+                                    <a class="text-dark decoration-none" href="{{ product.get_absolute_url }}">
+                                        <h5 class="card-title">{{ product.name }}</h5>
+                                    </a>
+                                    <p class="card-text"><small class="text-muted">{{ product.price }}$</small></p>
+                                    <p class="card-text">{{ product.description }}</p>
+                                    <p class="card-foot">
+                                        <a href="{% url 'index-add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
+                                        <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-suit-heart-fill"></i>&nbsp; To Favorite</button>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            {% for product in products|slice:"6:9" %}
-                <div class="col">
-                    <div class="card mt-4">
-                        <a href="{{ product.get_absolute_url }}">
-                            <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="card-img-top">
-                        </a>
-                        <div class="card-body">
-                            <a class="text-dark decoration-none" href="{{ product.get_absolute_url }}">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                            </a>
-                            <p class="card-text"><small class="text-muted">{{ product.price }}$</small></p>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-foot">
-                                <a href="{% url 'index-add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
-                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-suit-heart-fill"></i>&nbsp; To Favorite</button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+            </div>
         </div>
     </div>
 

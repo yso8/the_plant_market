@@ -4,20 +4,15 @@
 
     <div class="container">
 
-        <h3> Vos commandes </h3>
+        <h3 style="text-align: center"> Vos commandes </h3>
 
+        {% if orders %}
 
-        <div class="row">
-            <div class="col-4">
-                <a href="{% url 'my_account:addresses' %}"> <button type="button" class="btn btn-primary">Mes adresses </button> </a>
-            </div>
-            <div class="col-4">
-                <a href="{% url 'my_account:orders' %}"> <button type="button" class="btn btn-primary">Mes commandes </button> </a>
-            </div>
-            <div class="col-4">
-                <a href="{% url 'my_account:returns' %}"><button type="button" class="btn btn-primary">Mes retours </button></a>
-            </div>
-        </div>
+        {% else %}
+            <p> Vous n'avez pas encore fait de commandes</p>
+            <a href="{% url 'index' %}" class="btn btn-info"> Voir les articles </a>
+        {% endif %}
+
 
     </div>
 
