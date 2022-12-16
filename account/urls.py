@@ -2,7 +2,7 @@ from django.urls import path
 
 # import all functions defined
 from . import views
-from .views import account_home, account_address, account_order, account_return
+from .views import account_home, account_address, account_order, account_return, account_address_add, account_address_update,account_address_delete
 from django.contrib.auth import views as auth_views
 
 app_name = 'my_account'
@@ -10,6 +10,9 @@ urlpatterns = [
     # ex : /my-account/
     path('account/', account_home, name='home'),
     path('account/addresses', account_address, name='addresses'),
+    path('account/address/add', account_address_add, name='new_address'),
+    path('account/address/update/<int:id>', account_address_update, name='update_address'),
+    path('account/address/delete/<int:id>', account_address_delete, name='delete_address'),
     path('account/orders', account_order, name='orders'),
     path('account/returns', account_return, name='returns'),
 
