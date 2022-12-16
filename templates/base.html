@@ -41,18 +41,20 @@
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ user.username }}
                         </a>
+
                         {%  if user.is_staff %}
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin page</a></li>
                         </ul>
                         {% else %}
-                        <ul class="dropdown-menu" aria-labelledsby="dropdownMenuLink">
-                            <li><a class="dropdown-item" href="{% url 'my_account:home' %}">My account</a></li>
-                        </ul>
-                        {%  endif %}
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" href="{% url 'my_account:home' %}">Mon compte</a></li>
+                        </ul>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                         </ul>
+                        {%  endif %}
+
                     </div>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-success">Login</a>

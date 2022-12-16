@@ -74,11 +74,11 @@
                     </table>
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-6 text-muted">
-                            Subtotal: $99.99
+                            Subtotal: {{ total }}
                         </div>
 
                         <div class="col-lg-6 col-md-6 col-6 d-flex flex-row-reverse">
-                            <a href="#" class="btn btn-sm btn-primary">Checkout</a>
+                            <a href="{% url 'address_delivery_selection' %}" class="btn btn-sm btn-primary">Checkout</a>
                         </div>
                     </div>
                 </div>
