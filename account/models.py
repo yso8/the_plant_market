@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.formfields import PhoneNumberField
+from store.models import Product
+
 
 class Shopper(AbstractUser):
-    pass
+    favorite = models.ManyToManyField(Product)
 
 
 class Address(models.Model):
