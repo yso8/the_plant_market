@@ -6,13 +6,20 @@
         <div class="col mt-4">
                   <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                     <div class="col p-4 d-flex flex-column position-static">
-                      <strong class="d-inline-block mb-2 text-primary">{{ product.quantity }} pieces left</strong>
+                        {% if product.quantity == 0 %}
+                            <strong class="d-inline-block mb-2 text-primary" style="color:red">Out of stock</strong>
+                        {% else %}
+                            <strong class="d-inline-block mb-2 text-primary">{{ product.quantity }} pieces left</strong>
+                        {% endif %}
+
                       <h3 class="mb-0">{{ product.name }}</h3>
                       <div class="mb-1 text-muted">{{ product.price }}$</div>
                       <p class="card-text mb-auto">{{ product.description }}</p>
                         {% if user.is_authenticated %}
                         <div class="col-auto">
-                            <a href="{% url 'add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success mt-2 me-2" ><i class="bi bi-bag-plus"></i>&nbsp;Add To Cart</a>
+                            {% if product.quantity != 0 %}
+                                <a href="{% url 'add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success mt-2 me-2" ><i class="bi bi-bag-plus"></i>&nbsp;Add To Cart</a>
+                            {% endif %}
                             <a href="{% url 'add-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger mt-2 me-2" ><i class="bi bi-suit-heart-fill"></i>&nbsp;Add To Favorite</a>
                         </div>
                         {% endif %}

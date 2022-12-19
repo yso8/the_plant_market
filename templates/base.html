@@ -37,26 +37,23 @@
 
                 {% if user.is_authenticated %}
                      <a href="{% url 'show-favorite' %}" class="btn btn-outline-danger"><i class="bi bi-suit-heart-fill"></i></a>
-                    <div class="dropdown me-2">
+                     <li class="nav-item dropdown">
                         <a class="btn btn-success dropdown-toggle" role="button" id="dropdownMenuLink"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ user.username }}
                         </a>
+                        <ul class="dropdown-menu">
 
                         {%  if user.is_staff %}
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin page</a></li>
-                        </ul>
                         {% else %}
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <li><a class="dropdown-item" href="{% url 'my_account:home' %}">Mon compte</a></li>
-                        </ul>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        </ul>
                         {%  endif %}
 
-                    </div>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                      </li>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-success">Login</a>
                 {% endif %}
