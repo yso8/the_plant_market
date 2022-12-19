@@ -4,6 +4,7 @@ from django.views import generic
 from .models import Address
 from .forms import AddressForm
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -40,20 +41,19 @@ def logout_user(request):
     return redirect('index')
 
 
-def my_account(request):
-    return render(request, 'account/signup.html')
-
-
+@login_required
 def account_home(request):
     return render(request, 'account/user_settings.html')
 
 
+@login_required
 def account_address(request):
     # fetchs les adresses du user
     addresses = Address.objects.filter(user=request.user)
     return render(request, 'account/user_address.html', context={"addresses": addresses})
 
 
+@login_required
 def account_address_add(request):
     if request.method == 'POST':
         form = AddressForm(request.POST)
@@ -79,6 +79,7 @@ def account_address_add(request):
     return render(request, 'account/user_add_address.html', {'form': form})
 
 
+@login_required
 def account_address_update(request, id):
     if request.method == 'PUT':
         form = AddressForm(request.PUT)
@@ -106,14 +107,17 @@ def account_address_update(request, id):
         return render(request, 'account/user_update_address.html', {'form': form})
 
 
+@login_required
 def account_address_delete(request, id):
     Address.objects.filter(id=id, user=request.user).delete()
     return HttpResponseRedirect('/account/addresses')
 
 
+@login_required
 def account_order(request):
     return render(request, 'account/user_orders.html')
 
 
+@login_required
 def account_return(request):
     return render(request, 'account/user_return.html')

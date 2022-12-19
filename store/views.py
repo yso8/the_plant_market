@@ -1,20 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from store.models import Product, Cart, Order, Delivery, Category
+from account.models import Shopper
 from account.models import Address
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from .forms import PaymentForm
 
 
 def index(request):
     products = Product.objects.all()
-    nb_products = len(products)
-    return render(request, 'store/index.html', context={"products": products, "nb_products": nb_products})
+    filters = Category.objects.all()
+    return render(request, 'store/index.html', context={"products": products, "filters": filters})
 
 
 def filter_products(request, filter):
-    products_filter = Product.objects.filter(category=filter)
-    filters = Category.objects.all()
-    return render(request, 'store/index.html', context={"products": products_filter, "filters": filters})
+    print(filter)
+    return redirect('/login')
 
 
 def product_detail(request, slug):
@@ -22,53 +24,42 @@ def product_detail(request, slug):
     return render(request, 'store/product_detail.html', context={"product": product})
 
 
-def check_is_user_logged(request):
-    user = request.user
-    if user:
-        return True
-
-
+@login_required
 def add_to_cart(request, slug):
-    if request.user.is_authenticated:
-        product = get_object_or_404(Product, slug=slug)
-        cart, _ = Cart.objects.get_or_create(user=user)
-        order, created = Order.objects.get_or_create(user=user, product=product)
+    product = get_object_or_404(Product, slug=slug)
+    cart, _ = Cart.objects.get_or_create(user=user)
+    order, created = Order.objects.get_or_create(user=user, product=product)
 
-        if created:
-            cart.orders.add(order)
-            cart.save()
-        else:
-            order.quantity += 1
-            order.save()
-
-        return redirect(reverse("product_detail", kwargs={"slug": slug}))
-
+    if created:
+        cart.orders.add(order)
+        cart.save()
     else:
-        return redirect('/login')
+        order.quantity += 1
+        order.save()
+
+    return redirect(reverse("product_detail", kwargs={"slug": slug}))
 
 
+@login_required
 def index_add_to_cart(request, slug):
-    if request.user.is_authenticated:
-        user = request.user
-        product = get_object_or_404(Product, slug=slug)
-        cart, _ = Cart.objects.get_or_create(user=user)
-        order, created = Order.objects.get_or_create(user=user, product=product)
+    user = request.user
+    product = get_object_or_404(Product, slug=slug)
+    cart, _ = Cart.objects.get_or_create(user=user)
+    order, created = Order.objects.get_or_create(user=user, product=product)
 
-        if created:
-            cart.orders.add(order)
-            cart.save()
-        else:
-            order.quantity += 1
-            order.save()
-
-        products = Product.objects.filter()
-        nb_products = len(products)
-        return render(request, 'store/index.html', context={"products": products, "nb_products": nb_products})
-
+    if created:
+        cart.orders.add(order)
+        cart.save()
     else:
-        return redirect('/login')
+        order.quantity += 1
+        order.save()
+
+    products = Product.objects.filter()
+    nb_products = len(products)
+    return render(request, 'store/index.html', context={"products": products, "nb_products": nb_products})
 
 
+@login_required
 def cart(request):
     cart = get_object_or_404(Cart, user=request.user)
     print("Mon cart :")
@@ -82,20 +73,27 @@ def cart(request):
     return render(request, 'store/cart.html', context={"orders": cart.orders.all(), "total": total})
 
 
+@login_required
 def add_to_favorite(request, id):
-    if request.user.is_authenticated:
-        product = get_object_or_404(Product, id=id)
-        print(product)
-        # get le produit
+    # get the product selected by user
+    product = Product.objects.get(id=id)
 
-        # check if already in fav
+    # get the current user
+    user = Shopper.objects.get(id=request.user.id)
+    user.favorite.add(product)
 
-        return redirect('index')
-
-    else:
-        return redirect('/login')
+    # check if product is already in favorite
 
 
+@login_required
+def show_favorite(request):
+    print(request.user.id)
+    favorites = Shopper.objects.filter(favorite=request.user.id)
+    print(favorites)
+    return render(request, 'store/favorite.html', context={"favorites": favorites})
+
+
+@login_required
 def delete_cart(request):
     if cart := get_object_or_404(Cart, user=request.user):
         cart.orders.all().delete()
@@ -103,6 +101,7 @@ def delete_cart(request):
     return redirect('index')
 
 
+@login_required
 def delete_product_to_cart(request, slug):
     if cart := get_object_or_404(Cart, user=request.user):
         if len(cart.orders.all()) == 1:
@@ -118,6 +117,7 @@ def delete_product_to_cart(request, slug):
         return redirect('index')
 
 
+@login_required
 def select_delivery_method(request):
     addresses = Address.objects.filter(user=request.user)
     deliveries = Delivery.objects.all()
@@ -125,5 +125,16 @@ def select_delivery_method(request):
                                                                             "deliveries": deliveries})
 
 
+@login_required
 def payment_method(request):
-    return render(request, 'store/payment.html')
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        print(form)
+        if form.is_valid():
+            #get the values from the form
+
+            return HttpResponseRedirect('/payment/successful')
+    else:
+        form = PaymentForm()
+
+    return render(request, 'store/payment.html', {'form': form})
