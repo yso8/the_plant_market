@@ -43,12 +43,11 @@ class Order(models.Model):
     ordered = models.BooleanField(default=False)
     ordered_date = models.DateTimeField(blank=True, null=True)
     delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True)
+    # total price of the order
+    price = models.FloatField(null=True)
 
     def __str__(self):
         return f"{self.user} : {self.product.name} ({self.quantity})"
-
-    def total(self):
-        return product
 
 
 class Cart(models.Model):

@@ -8,6 +8,10 @@ class Shopper(AbstractUser):
     favorite = models.ManyToManyField(Product)
 
 
+class Rating(models.Model):
+    user = models.ManyToManyField(Shopper)
+
+
 class Address(models.Model):
     name = models.CharField(max_length=100)
     city = models.CharField(max_length=38, default='default')

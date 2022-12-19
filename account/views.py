@@ -13,17 +13,22 @@ def signup(request):
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
+        confirm_password = request.POST.get("confpassword")
+        print(confirm_password)
 
         # check if the username and email are already in use
         check_username = Shopper.objects.filter(username=username)
         check_email = Shopper.objects.filter(email=email)
-        print(check_email)
 
-        if not check_username and not check_email:
+        if not check_username and not check_email and password == confirm_password:
             user = Shopper.objects.create_user(username=username, email=email, password=password)
             login(request, user)
             return redirect('index')
         # if username already in use
+        elif password != confirm_password:
+            error_password = True
+            return render(request, 'account/signup.html',
+                          {"error_password": error_password})
         elif check_username and check_email:
             error_username = True
             error_email = True
@@ -46,9 +51,11 @@ def login_user(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
         user = authenticate(username=username, password=password)
+        # if user is successfully authenticated, send him on the index page
         if user:
             login(request, user)
             return redirect('index')
+        # throw an error in the template saying its credentials are incorrect
         else:
             error = True
             return render(request, 'account/login.html', context={"error": error})
@@ -63,12 +70,13 @@ def logout_user(request):
 
 @login_required
 def account_home(request):
+    # returns base page for user account
     return render(request, 'account/user_settings.html')
 
 
 @login_required
 def account_address(request):
-    # fetchs les adresses du user
+    # get the address for the current user
     addresses = Address.objects.filter(user=request.user)
     return render(request, 'account/user_address.html', context={"addresses": addresses})
 
