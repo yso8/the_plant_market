@@ -8,11 +8,19 @@
             <h1 class="h3 mb-3 fw-normal">Please Sign-Up</h1>
             <p>Already have an account  ? <a href="{% url 'login' %}">Login</a></p>
 
+
+            {% if error_username %}
+                <strong style="color: red"> Username is already in use </strong>
+            {% endif %}
             <div class="form-floating">
                 <input type="username" autocomplete="off" name="username" value="" class="form-control mb-1"
                        id="username" placeholder="Username">
                 <label for="username">Username</label>
             </div>
+
+            {% if error_email %}
+                 <strong style="color: red"> Email is already in use </strong>
+            {% endif %}
             <div class="form-floating">
                 <input type="email" autocomplete="off" name="email" value="" class="form-control mb-1" id="email"
                        placeholder="name@example.com">
