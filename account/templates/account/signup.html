@@ -26,10 +26,18 @@
                        placeholder="name@example.com">
                 <label for="floatingInput">Email address</label>
             </div>
+            {% if error_password %}
+                <strong style="color: red"> Passwords don't match </strong>
+            {% endif %}
             <div class="form-floating">
                 <input type="password" autocomplete="off" name="password" value="" class="form-control" id="password"
                        placeholder="Password">
                 <label for="password">Password</label>
+            </div>
+            <div class="form-floating">
+                    <input type="password" autocomplete="off" name="confpassword" value="" class="form-control" id="confpassword"
+                           placeholder="Confirm password">
+                    <label for="confpassword">Confirm password</label>
             </div>
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Sign Up</button>
