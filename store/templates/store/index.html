@@ -6,8 +6,15 @@
         <div class="row">
             <div class="col-2">
                 <h5> Filter : </h5>
+                {% csrf_token %}
                 {% for filter in filters %}
-                    {{ filter }}
+                    <div class="form-check">
+                    <a href="{% url 'product_filters' filter %}">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></a>
+                      <label class="form-check-label" for="flexCheckDefault">
+                          {{ filter}}
+                      </label>
+                    </div>
                 {% endfor %}
             </div>
             <div class="col-10">
@@ -26,7 +33,7 @@
                                     <p class="card-text">{{ product.description }}</p>
                                     <p class="card-foot">
                                         <a href="{% url 'index-add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
-                                        <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-suit-heart-fill"></i>&nbsp; To Favorite</button>
+                                        <a href="{% url 'add-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-suit-heart-fill"></i>&nbsp; Favorite</a>
                                     </p>
                                 </div>
                             </div>

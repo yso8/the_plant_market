@@ -9,8 +9,25 @@
         {% endif %}
        <form action="" method="post">
            {% csrf_token %}
-           {{ form }}
+           <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address*</label>
+               {{form.name}}
+           </div>
+           <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">City*</label>
+               {{form.city}}
+           </div>
+           <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Postal code*</label>
+               {{form.postal_code}}
+           </div>
+           <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Address complement</label>
+               {{form.address_complement}}
+           </div>
+
            <button class="btn btn-info"> Submit </button>
+
        </form>
 
     </div>

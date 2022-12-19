@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="">
+        <h3> My favorite products </h3>
+        <div>
+            {% for favorite in favorites %}
+                <div>
+                    {{ favorite }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
