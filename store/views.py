@@ -9,17 +9,23 @@ from .forms import PaymentForm
 
 
 def index(request):
+    # get all the products in the database
     products = Product.objects.all()
+    # get all the filters which are the category of the products
     filters = Category.objects.all()
     return render(request, 'store/index.html', context={"products": products, "filters": filters})
 
 
 def filter_products(request, filter):
-    print(filter)
-    return redirect('/login')
+    category = Category.objects.get(name=filter)
+    print(category.id)
+    products = Product.objects.filter(category=category.id)
+    filters = Category.objects.all()
+    return render(request, 'store/index.html', context={"products": products, "filters": filters})
 
 
 def product_detail(request, slug):
+    # get only the information about the selected product
     product = get_object_or_404(Product, slug=slug)
     return render(request, 'store/product_detail.html', context={"product": product})
 
@@ -61,16 +67,23 @@ def index_add_to_cart(request, slug):
 
 @login_required
 def cart(request):
-    cart = get_object_or_404(Cart, user=request.user)
-    print("Mon cart :")
-    print(cart.orders)
-    cart_articles = cart.orders.all()
+    # get user cart
+    get_cart = get_object_or_404(Cart, user=request.user)
+    cart_articles = Order.objects.filter(user=request.user.id)
+    # initialize a value to calculate the total before shipment fees
     total = 0
+    # loop through the cart
     for i in cart_articles:
-        total += 1
-    print(total)
+        # Get the product to access its value price
+        get_product = Product.objects.get(id=i.product_id)
+        # Calculate the price based on quantity and price
+        total += get_product.price * i.quantity
 
-    return render(request, 'store/cart.html', context={"orders": cart.orders.all(), "total": total})
+    # set the total price on the database
+    #cart_articles.price = total
+    #cart_articles.save()
+
+    return render(request, 'store/cart.html', context={"orders": get_cart.orders.all(), "total": total})
 
 
 @login_required
@@ -87,9 +100,11 @@ def add_to_favorite(request, id):
 
 @login_required
 def show_favorite(request):
-    print(request.user.id)
-    favorites = Shopper.objects.filter(favorite=request.user.id)
-    print(favorites)
+    # load all the favorites from the logged user
+    favorites = Shopper.objects.filter(id=request.user.id)
+
+    for i in favorites:
+        print(i.favorite)
     return render(request, 'store/favorite.html', context={"favorites": favorites})
 
 
@@ -119,6 +134,11 @@ def delete_product_to_cart(request, slug):
 
 @login_required
 def select_delivery_method(request):
+    if request.method == 'POST':
+        address_name = request.POST.get("address_name")
+        carrier_name = request.POST.get("carrier_name")
+        return HttpResponseRedirect('/payment')
+
     addresses = Address.objects.filter(user=request.user)
     deliveries = Delivery.objects.all()
     return render(request, 'store/address_delivery_selector.html', context={"addresses": addresses,
@@ -127,14 +147,29 @@ def select_delivery_method(request):
 
 @login_required
 def payment_method(request):
+    # if the request is post
     if request.method == 'POST':
         form = PaymentForm(request.POST)
-        print(form)
+        # if the form is valid
         if form.is_valid():
-            #get the values from the form
+            # get the values from each field
+            name = form.cleaned_data['name']
+            card = form.cleaned_data['card_number']
+            expiration = form.cleaned_data['expiration_date']
+            cvv = form.cleaned_data['cvv']
 
-            return HttpResponseRedirect('/payment/successful')
+            print(name, card, expiration, cvv)
+            if name == "Admin admin" and card == '1234567812345678' and expiration == "12/22" and cvv == "123":
+                return HttpResponseRedirect('/payment/successful')
+            else:
+                error = True
+                return render(request, 'store/payment.html', {'form': form, 'error': error})
+    # if the request is a get
     else:
+        # load the form created in forms.py
         form = PaymentForm()
+        return render(request, 'store/payment.html', {'form': form})
 
-    return render(request, 'store/payment.html', {'form': form})
+
+def handle_not_found(request, exception):
+    return render(request, 'error/404.html')
