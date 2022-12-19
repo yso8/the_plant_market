@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="">
+            <h3>Cette page n'existe pas </h3>
+            <p> Vous allez etre automatiquement redirigé </p>
+        </div>
+    </div>
+
+    <script>
+        console.log("Test")
+        setTimeout(() =>{
+            window.location.replace('http://localhost:8000')
+        }, 3000)
+    </script>
+
+{% endblock %}
