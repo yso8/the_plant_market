@@ -4,13 +4,13 @@
 
     <div class="container">
 
-        <h3 style="text-align: center"> Vos commandes </h3>
+        <h3 style="text-align: center"> Your orders </h3>
 
         {% if orders %}
 
         {% else %}
-            <p> Vous n'avez pas encore fait de commandes</p>
-            <a href="{% url 'index' %}" class="btn btn-info"> Voir les articles </a>
+            <p> You don't have orders, yet</p>
+            <a href="{% url 'index' %}" class="btn btn-info"> Check the products </a>
         {% endif %}
 
 

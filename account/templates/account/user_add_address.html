@@ -3,14 +3,14 @@
 {% block content %}
 
     <div class="container">
-        <h3 style="text-align: center"> Ajouter une nouvelle addresse</h3>
+        <h3 style="text-align: center"> Add a new address</h3>
         {% if error %}
-            <p style="color:red;"> Une adresse avec ce nom existe déjà</p>
+            <p style="color:red;"> An address with this name already exists</p>
         {% endif %}
        <form action="" method="post">
            {% csrf_token %}
            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address*</label>
+                <label for="exampleInputEmail1" class="form-label">Address name*</label>
                {{form.name}}
            </div>
            <div class="mb-3">

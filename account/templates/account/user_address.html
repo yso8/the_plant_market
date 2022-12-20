@@ -8,16 +8,16 @@
            {%  for address in addresses%}
               <div style="background-color: #b2ffff; border-radius: 5%; padding: 0.2rem; margin: 1rem">
                 <h3> {{ address.name }}</h3>
-                <a href="{% url 'my_account:update_address' address.id%}" class="btn btn-info"> Modifier l'adresse</a>
-                <a href="{% url 'my_account:delete_address' address.id%}" class="btn btn-danger"> Supprimer l'adresse</a>
+                <a href="{% url 'my_account:update_address' address.id%}" class="btn btn-info"> Modify address</a>
+                <a href="{% url 'my_account:delete_address' address.id%}" class="btn btn-danger"> Delete address </a>
               </div>
            {% endfor %}
 
-           <a href="{% url 'my_account:new_address' %}" class="btn btn-info"> Ajouter une nouvelle adresse</a>
+           <a href="{% url 'my_account:new_address' %}" class="btn btn-info"> Add a new address</a>
        {% else %}
            <div>
-            <h3> Vous n'avez pas encore d'adresses renseignées </h3>
-             <a href="{% url 'my_account:new_address' %}"> <button type="button" class="btn btn-primary">Ajouter une adresse </button> </a>
+            <h3> You don't have any register addresses. </h3>
+             <a href="{% url 'my_account:new_address' %}"> <button type="button" class="btn btn-primary">Add a new address </button> </a>
            </div>
        {% endif %}
 

@@ -11,7 +11,7 @@
             <div class="addresses">
             {% for address in addresses %}
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="flexAddress" id="flexRadioDefault1" value="{{ address.name }}">
                     <label class="form-check-label" for="flexRadioDefault1"> {{ address.name }} </label>
                 </div>
             {% endfor %}
@@ -24,7 +24,7 @@
         <div>
         {% for delivery in deliveries %}
                 <div class="form-check" style="background-color: azure; margin-bottom: 0.2rem">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="flexCarrier" id="flexRadioDefault1" value="{{ delivery.id }}">
                     <label class="form-check-label" for="flexRadioDefault1"> {{ delivery.name }} <br>{{ delivery.price }}€ <br>{{ delivery.time_days }} days</label>
                 </div>
         {% endfor %}

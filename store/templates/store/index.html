@@ -33,7 +33,7 @@
                                     <p class="card-text">{{ product.description }}</p>
                                     <p class="card-foot">
                                         {% if product.quantity != 0 %}
-                                            <a href="{% url 'index-add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
+                                            <a href="{% url 'add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
                                         {% endif %}
                                         <a href="{% url 'add-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-suit-heart-fill"></i>&nbsp; Favorite</a>
                                     </p>
