@@ -36,23 +36,35 @@ class Delivery(models.Model):
         return f"{self.name} : {self.price} {self.time_days}"
 
 
-class Order(models.Model):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-    ordered = models.BooleanField(default=False)
-    ordered_date = models.DateTimeField(blank=True, null=True)
-    delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True)
-    # total price of the order
-    price = models.FloatField(null=True)
-
-    def __str__(self):
-        return f"{self.user} : {self.product.name} ({self.quantity})"
-
-
 class Cart(models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    orders = models.ManyToManyField(Order)
+    address = models.CharField(max_length=256, null=True)
+    carrier = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.user.username
+
+
+class CartProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    user_cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+
+
+class Order(models.Model):
+    order = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    price = models.FloatField()
+    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+
+class OrderProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+
+class OrderDetails(models.Model):
+    address = models.CharField(max_length=256)
+    carrier = models.CharField(max_length=100)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True)
+    total = models.FloatField()

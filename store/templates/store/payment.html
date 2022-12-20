@@ -6,7 +6,7 @@
         <h3> Select payment method </h3>
 
         <div>
-       <form action="/payment-check" method="post">
+       <form action="/payment-check/" method="post">
            {% csrf_token %}
            <div class="container p-0">
                 <div class="card px-4">
@@ -36,6 +36,9 @@
                                 {{ form.cvv }}
                             </div>
                         </div>
+                        {%  if error %}
+                            <h3 style="color: red"> Vérifier les informations de votre cartre.</h3>
+                        {% endif %}
                         <div class="col-12">
                             <div class="">
                                 <button class="btn btn-info">Pay TOTAL</button>
@@ -46,9 +49,7 @@
                 </div>
             </div>
        </form>
-            {%  if error %}
-                <h3 style="color: red"> Vérifier les informations de votre cartre.</h3>
-            {% endif %}
+
         </div>
 
         <div>
