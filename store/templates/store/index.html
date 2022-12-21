@@ -7,6 +7,7 @@
             <div class="col-2">
                 <h5> Filter : </h5>
                 {% csrf_token %}
+                {% if filters %}
                 {% for filter in filters %}
                     <div class="form-check">
                     <a href="{% url 'product_filters' filter %}">
@@ -16,6 +17,7 @@
                       </label>
                     </div>
                 {% endfor %}
+                {% endif %}
             </div>
             <div class="col-10">
                 <div class="row">

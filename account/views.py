@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views import generic
 from .models import Address, Shopper
+from store.models import Order
 from .forms import AddressForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -143,7 +144,18 @@ def account_address_delete(request, id):
 
 @login_required
 def account_order(request):
-    return render(request, 'account/user_orders.html')
+
+    get_orders = Order.objects.filter(user=request.user.id)
+
+    products = []
+
+    for i in get_orders:
+        print(i.order.product)
+        print(i.user.id)
+        get_product = Product.objects.get()
+        products.append()
+
+    return render(request, 'account/user_orders.html', {"orders": orders})
 
 
 @login_required

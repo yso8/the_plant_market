@@ -34,6 +34,7 @@ def product_detail(request, slug):
 def add_to_cart(request, slug):
     product = get_object_or_404(Product, slug=slug)
 
+    print('Add to cart')
     try:
         get_cart = Cart.objects.get(user=request.user)
         add_article = CartProduct(product=product, quantity=1, user_cart=get_cart)
@@ -64,7 +65,6 @@ def cart(request):
         # Get the product to access its value price
         get_product = Product.objects.get(id=i.product_id)
         get_product.quantity = i.quantity
-        print(get_product.quantity)
         products.append(get_product)
         # Calculate the price based on quantity and price
         total += get_product.price * i.quantity
@@ -74,7 +74,8 @@ def cart(request):
     # cart_articles.save()
 
     return render(request, 'store/cart.html',
-                  context={"cart_articles": products, "quantities": cart_articles, "total": total})
+                  context={"cart_articles": products, "quantities": cart_articles, "total": total,
+                           "products_number": len(products)})
 
 
 @login_required
@@ -86,16 +87,22 @@ def add_to_favorite(request, id):
     user = Shopper.objects.get(id=request.user.id)
     user.favorite.add(product)
 
+    return redirect('index')
+
     # check if product is already in favorite
 
 
 @login_required
 def show_favorite(request):
     # load all the favorites from the logged user
-    favorites = Shopper.objects.filter(id=request.user.id)
+    user = Shopper.objects.get(id=request.user.id)
 
-    for i in favorites:
-        print(i.favorite)
+    favorites = []
+
+    # loop through user favorites
+    for favorite in user.favorite.all():
+        favorites.append(favorite)
+
     return render(request, 'store/favorite.html', context={"favorites": favorites})
 
 
@@ -109,18 +116,12 @@ def delete_cart(request):
 
 @login_required
 def delete_product_to_cart(request, slug):
-    if cart := get_object_or_404(Cart, user=request.user):
-        if len(cart.orders.all()) == 1:
-            cart.orders.all().delete()
-            cart.delete()
-            return redirect('index')
-        else:
-            product = get_object_or_404(Product, slug=slug)
-            order = get_object_or_404(Order, user=request.user, product=product)
-            order.delete()
-            return redirect('cart')
-    else:
-        return redirect('index')
+    product = Product.objects.get(slug=slug)
+    get_cart = Cart.objects.get(user_id=request.user.id)
+    cart_products = CartProduct.objects.get(user_cart=get_cart, product_id=product.id)
+    cart_products.delete()
+
+    return redirect('/cart')
 
 
 @login_required
@@ -184,9 +185,7 @@ def create_order(user):
     # create a new order
     cart = Cart.objects.get(user=user)
     cart_products = CartProduct.objects.filter(user_cart=cart)
-    print(cart)
 
-    #AJOUTER l'user à l'order
     order = Order(order=cart, price=10, user=user)
     order.save()
     order_details = OrderDetails(address=cart.address, carrier=cart.carrier, order=order, total=100)
@@ -197,9 +196,13 @@ def create_order(user):
         add_product_order = OrderProduct(product=get_product, order_id=order, quantity=i.quantity)
         add_product_order.save()
 
-    # order_details = OrderDetails(address=, carrier=, order=order.id, total=)
+        # empty the cart
+        empty_cart()
 
-    # empty the cart
+
+def empty_cart():
+    # empty the cart after the order has been completed
+    Cart().delete()
 
 
 def payment_successful(request):

@@ -6,8 +6,9 @@
         <h3> My favorite products </h3>
         <div>
             {% for favorite in favorites %}
-                <div>
-                    {{ favorite }}
+                <div class="card mt-4">
+                    <a href="{% url 'product_detail' favorite.slug %}">{{ favorite }}</a>
+                    <img src="{{ favorite.picture.url }}" alt="{{ favorite }}">
                 </div>
             {% endfor %}
         </div>

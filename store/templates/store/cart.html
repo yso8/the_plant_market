@@ -8,7 +8,7 @@
                 <div class="col-lg-8 col-md-8 col-8">
                     <h3 class="display-6 mb-2 text-center">Shopping Cart</h3>
                     <p class="mb-3 text-center">
-                        {{ orders|length }} item(s) in your cart
+                        {{ products_number }} item(s) in your cart
                     </p>
                     <table class="table table-condensed table-responsive">
                         <thead>
@@ -57,8 +57,15 @@
                                     </div>
                                 </td>
                                 <td data-th="Quantity">
-                                    <div class="mt-sm-2">
-                                        <p class="text-center">{{ cart_article.quantity }}</p>
+                                    <div class="input-group mb-3">
+                                      <select class="custom-select" id="inputGroupSelect01">
+                                        <option selected> {{ cart_article.quantity }}</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                          <option value="4">4</option>
+                                          <option value="5">5</option>
+                                      </select>
                                     </div>
                                 </td>
                                 <td class="actions">
@@ -74,7 +81,7 @@
                     </table>
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-6 text-muted">
-                            Subtotal: {{ total }}
+                            Subtotal: {{ total }} €
                         </div>
 
                         <div class="col-lg-6 col-md-6 col-6 d-flex flex-row-reverse">
