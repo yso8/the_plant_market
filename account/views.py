@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views import generic
 from .models import Address, Shopper
-from store.models import Order
+from store.models import Order, OrderProduct
 from .forms import AddressForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -85,6 +85,7 @@ def account_address(request):
 @login_required
 def account_address_add(request):
     if request.method == 'POST':
+        print("dans le post")
         form = AddressForm(request.POST)
         if form.is_valid():
             # create new address
@@ -94,9 +95,14 @@ def account_address_add(request):
             address_complement = form.cleaned_data['address_complement']
             # check if address name already exists or not
             address = Address.objects.filter(name=name, user=request.user)
+
             if address:
-                error = True
-                return render(request, 'account/user_add_address.html', {'form': form, 'error': error})
+                error_address = True
+                return render(request, 'account/user_add_address.html', {'form': form, 'error_address': error_address})
+
+            if postal_code != 5:
+                postal_error = True
+                return render(request, 'account/user_add_address.html', {'form': form, 'error_postal': postal_error})
             else:
                 address = Address(name=name, city=city,
                                   postal_code=postal_code, address_complement=address_complement, user=request.user)
@@ -144,18 +150,24 @@ def account_address_delete(request, id):
 
 @login_required
 def account_order(request):
+    get_orders = Order.objects.filter(user_id=request.user)
 
-    get_orders = Order.objects.filter(user=request.user.id)
+    for order in get_orders:
+        get_orders_products = OrderProduct.objects.filter(order_id=order)
+        print(get_orders_products)
 
-    products = []
+    orders = []
 
-    for i in get_orders:
-        print(i.order.product)
-        print(i.user.id)
-        get_product = Product.objects.get()
-        products.append()
+    orders_dict = {
+        "order1": ["1", "2", "3"],
+    }
 
-    return render(request, 'account/user_orders.html', {"orders": orders})
+    print(orders_dict["order1"])
+
+    for t in get_orders:
+        print(t)
+
+    return render(request, 'account/user_orders.html', {"orders": orders_dict})
 
 
 @login_required

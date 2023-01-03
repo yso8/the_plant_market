@@ -2,8 +2,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from store.views import index, product_detail, add_to_cart, cart, delete_cart, \
-    delete_product_to_cart, add_to_favorite, select_delivery_method, payment_method, filter_products, show_favorite, \
-    payment_successful
+    delete_product_to_cart, add_to_favorite, select_delivery_method, payment_method, payment_check, filter_products, \
+    show_favorite, payment_successful, test_ajax
 from account.views import signup, logout_user, login_user
 from shop import settings
 
@@ -24,8 +24,9 @@ urlpatterns = [
                   path('cart/delete-product/<str:slug>/', delete_product_to_cart, name="delete-product-to-cart"),
                   path('cart/delivery', select_delivery_method, name="address_delivery_selection"),
                   path('payment/', payment_method, name="payment"),
-                  path('payment-check/', payment_method, name="payment-check"),
-                  path('payment/successful', payment_successful, name="payment-success")
+                  path('payment-check/', payment_check, name="payment-check"),
+                  path('payment/successful', payment_successful, name="payment-success"),
+                  path('add/test/', test_ajax, name="test-ajax")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # custom handler for 404 page

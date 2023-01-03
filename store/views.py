@@ -3,9 +3,10 @@ from django.urls import reverse
 from store.models import Product, Cart, Order, Delivery, Category, CartProduct, OrderDetails, OrderProduct
 from account.models import Shopper
 from account.models import Address
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import PaymentForm
+import json
 
 
 def index(request):
@@ -33,12 +34,24 @@ def product_detail(request, slug):
 @login_required
 def add_to_cart(request, slug):
     product = get_object_or_404(Product, slug=slug)
+    print(product.id)
 
-    print('Add to cart')
     try:
         get_cart = Cart.objects.get(user=request.user)
-        add_article = CartProduct(product=product, quantity=1, user_cart=get_cart)
-        add_article.save()
+
+        get_product_cart = ""
+
+        try:
+            get_product_cart = CartProduct.objects.get(product=product)
+        except CartProduct.DoesNotExist:
+            add_article = CartProduct(product=product, quantity=1, user_cart=get_cart)
+            add_article.save()
+
+        # if product is already in the cart, add one to the quantity
+        if get_product_cart:
+            get_product_cart.quantity += 1
+            get_product_cart.save()
+
     except Cart.DoesNotExist:
         create_cart = Cart(user=request.user)
         create_cart.save()
@@ -50,6 +63,13 @@ def add_to_cart(request, slug):
 
 @login_required
 def cart(request):
+    if request.method == "POST":
+        print("Dans le post du cart")
+
+        # if some quantities are equal or inferior to 0, returns error
+
+        # else go to payment
+
     # get user cart
     get_cart = Cart.objects.get(user=request.user)
 
@@ -69,13 +89,13 @@ def cart(request):
         # Calculate the price based on quantity and price
         total += get_product.price * i.quantity
 
-    # set the total price on the database
-    # cart_articles.price = total
-    # cart_articles.save()
-
     return render(request, 'store/cart.html',
                   context={"cart_articles": products, "quantities": cart_articles, "total": total,
                            "products_number": len(products)})
+
+
+def quantity_check():
+    print("Update quantity")
 
 
 @login_required
@@ -153,32 +173,35 @@ def select_delivery_method(request):
 
 @login_required
 def payment_method(request):
-    # if the request is post
-    if request.method == 'POST':
-        form = PaymentForm(request.POST)
-        # if the form is valid
-        if form.is_valid():
-            # get the values from each field
-            name = form.cleaned_data['name']
-            card = form.cleaned_data['card_number']
-            expiration = form.cleaned_data['expiration_date']
-            cvv = form.cleaned_data['cvv']
+    # load the form created in forms.py
+    form = PaymentForm()
+    return render(request, 'store/payment.html', {'form': form})
 
-            print(name, card, expiration, cvv)
-            if name == "Admin admin" and card == '1234567812345678' and expiration == "12/22" and cvv == "123":
 
-                # get the card
-                create_order(request.user)
+def payment_check(request):
+    holder = request.POST.get("card_holder")
+    number = request.POST.get("card_number")
+    expiration = request.POST.get("expiration_date")
+    cvv = request.POST.get("cvv")
 
-                return HttpResponseRedirect('/payment/successful')
-            else:
-                error = True
-                return render(request, 'store/payment.html', {'form': form, 'error': error})
-    # if the request is a get
+    controller_response = ""
+
+    if holder and number and expiration and cvv:
+        result_check = cart_checker(holder, number, expiration, cvv)
+        if result_check:
+            controller_response = {"data": "success"}
     else:
-        # load the form created in forms.py
-        form = PaymentForm()
-        return render(request, 'store/payment.html', {'form': form})
+        controller_response = {"data": "error"}
+
+    return JsonResponse(controller_response)
+
+
+def cart_checker(holder, number, expiration, cvv):
+    return_val = False
+    if holder == 'Admin admin' and number == '1234567812345678' and expiration == '01/23' and cvv == 123:
+        return_val = True
+    print(return_val)
+    return return_val
 
 
 def create_order(user):
@@ -188,21 +211,27 @@ def create_order(user):
 
     order = Order(order=cart, price=10, user=user)
     order.save()
+    print(order.order_id)
     order_details = OrderDetails(address=cart.address, carrier=cart.carrier, order=order, total=100)
     order_details.save()
 
     for i in cart_products:
-        get_product = Product.objects.get(id=i.product_id)
-        add_product_order = OrderProduct(product=get_product, order_id=order, quantity=i.quantity)
+        product = Product.objects.get(id=i.product_id)
+        add_product_order = OrderProduct(product=product, order_id=order, quantity=i.quantity)
         add_product_order.save()
+        update_products_quantity(product, i.quantity)
 
-        # empty the cart
-        empty_cart()
+    empty_cart(cart)
 
 
-def empty_cart():
+def update_products_quantity(product, quantity):
+    product.quantity -= quantity
+    product.save()
+
+
+def empty_cart(cart):
     # empty the cart after the order has been completed
-    Cart().delete()
+    Cart(id=cart.id).delete()
 
 
 def payment_successful(request):
@@ -211,3 +240,10 @@ def payment_successful(request):
 
 def handle_not_found(request, exception):
     return render(request, 'error/404.html')
+
+@login_required
+def test_ajax(request):
+    print("Dans tets ajax")
+    jsonData = json.loads(request.body)
+    dataReceived = jsonData.get('selectedProduct')
+    return JsonResponse({"Donnée bien reçue": dataReceived})
