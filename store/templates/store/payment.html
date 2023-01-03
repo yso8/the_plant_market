@@ -6,7 +6,7 @@
         <h3> Select payment method </h3>
 
         <div>
-       <form action="/payment-check/" method="post">
+       <form>
            {% csrf_token %}
            <div class="container p-0">
                 <div class="card px-4">
@@ -18,12 +18,14 @@
                                 {{form.name}}
                             </div>
                         </div>
+
                         <div class="col-12">
                             <div class="d-flex flex-column">
                                 <p class="text mb-1">Card Number</p>
                                 {{form.card_number}}
                             </div>
                         </div>
+
                         <div class="col-6">
                             <div class="d-flex flex-column">
                                 <p class="text mb-1">Expiry</p>
@@ -41,7 +43,7 @@
                         {% endif %}
                         <div class="col-12">
                             <div class="">
-                                <button class="btn btn-info">Pay TOTAL</button>
+                                <button id="pay-button" class="btn btn-info">Pay TOTAL</button>
                                 <span class="fas fa-arrow-right"></span>
                             </div>
                         </div>
@@ -59,5 +61,7 @@
         </div>
     </div>
 </div>
+
+    <script src="../../static/js/payment.js"></script>
 
 {% endblock %}

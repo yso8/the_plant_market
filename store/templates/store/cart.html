@@ -85,6 +85,10 @@
                         </div>
 
                         <div class="col-lg-6 col-md-6 col-6 d-flex flex-row-reverse">
+                            <form action="/cart/" method="POST">
+                                {% csrf_token %}
+                                <button class="btn btn-info"> Checkout </button>
+                            </form>
                             <a href="{% url 'address_delivery_selection' %}" class="btn btn-sm btn-primary">Checkout</a>
                         </div>
                     </div>

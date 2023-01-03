@@ -2,24 +2,17 @@
 {% block content %}
 
     <div class="container">
-
-        <div class="row">
-            <div class="col-2">
-                <h5> Filter : </h5>
-                {% csrf_token %}
-                {% if filters %}
+        {% if filters %}
+        <header class="d-flex flex-wrap align-items-center justify-content-center py-3 mb-4 border-bottom">
+            <ul class="nav col-auto col-md-auto mb-2 justify-content-center mb-md-0">
                 {% for filter in filters %}
-                    <div class="form-check">
-                    <a href="{% url 'product_filters' filter %}">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></a>
-                      <label class="form-check-label" for="flexCheckDefault">
-                          {{ filter}}
-                      </label>
-                    </div>
+                <li><a href="{% url 'product_filters' filter %}" class=" btn btn-outline-dark btn-filter rounded-pill px-2 me-1">{{ filter }}</a></li>
                 {% endfor %}
-                {% endif %}
-            </div>
-            <div class="col-10">
+            </ul>
+        </header>
+        {% endif %}
+        <div class="row">
+            <div class="col-12">
                 <div class="row">
                     {% for product in products|slice:"0:3" %}
                         <div class="col">
@@ -34,10 +27,14 @@
                                     <p class="card-text"><small class="text-muted">{{ product.price }}$</small></p>
                                     <p class="card-text">{{ product.description }}</p>
                                     <p class="card-foot">
-                                        {% if product.quantity != 0 %}
-                                            <a href="{% url 'add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbsp; To Cart</a>
+                                        {% if user.is_authenticated %}
+                                            <a href="{% url 'add-to-cart' product.slug %}"
+                                               class="btn btn-sm btn-outline-success"><i class="bi bi-bag-plus"></i>&nbspTo
+                                                Cart</a>
+                                            <a href="{% url 'add-to-favorite' product.id %}"
+                                               class="btn btn-sm btn-outline-danger"><i
+                                                    class="bi bi-suit-heart-fill"></i>&nbspFavorite</a>
                                         {% endif %}
-                                        <a href="{% url 'add-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-suit-heart-fill"></i>&nbsp; Favorite</a>
                                     </p>
                                 </div>
                             </div>

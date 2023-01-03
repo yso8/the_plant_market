@@ -7,6 +7,11 @@
         <h3 style="text-align: center"> Your orders </h3>
 
         {% if orders %}
+            {% for value in orders %}
+                {% for val in value %}
+                    <p> {{ val }}</p>
+                {% endfor %}
+            {% endfor %}
 
         {% else %}
             <p> You don't have orders, yet</p>

@@ -3,24 +3,48 @@
 {% block content %}
 
     <div class="container">
+        <div class="text-center px-4 py-2">
+            <h2>your address</h2>
+            <p class="lead">
+                all your address information in one place.
+            </p>
+            <hr class="my-4 custom-hr mx-auto">
+        </div>
 
-       {% if addresses %}
-           {%  for address in addresses%}
-              <div style="background-color: #b2ffff; border-radius: 5%; padding: 0.2rem; margin: 1rem">
-                <h3> {{ address.name }}</h3>
-                <a href="{% url 'my_account:update_address' address.id%}" class="btn btn-info"> Modify address</a>
-                <a href="{% url 'my_account:delete_address' address.id%}" class="btn btn-danger"> Delete address </a>
-              </div>
-           {% endfor %}
+        {% if addresses %}
+            {% for address in addresses %}
+                <div class="row row-cols-1 row-cols-md-3 mb-3">
 
-           <a href="{% url 'my_account:new_address' %}" class="btn btn-info"> Add a new address</a>
-       {% else %}
-           <div>
-            <h3> You don't have any register addresses. </h3>
-             <a href="{% url 'my_account:new_address' %}"> <button type="button" class="btn btn-primary">Add a new address </button> </a>
-           </div>
-       {% endif %}
-
-    </div>
-
+                    <div class="col-auto mx-auto my-auto w-50">
+                        <div class="row rounded-3 py-3 px-3 shadow">
+                            <div class="col-1 my-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                     class="bi bi-house-check" viewBox="0 0 16 16" style="color: green">
+                                    <path d="M7.293 1.5a1 1 0 0 1 1.414 0L11 3.793V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3.293l2.354 2.353a.5.5 0 0 1-.708.708L8 2.207l-5 5V13.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 2 13.5V8.207l-.646.647a.5.5 0 1 1-.708-.708L7.293 1.5Z"/>
+                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.707l.547.547 1.17-1.951a.5.5 0 1 1 .858.514Z"/>
+                                </svg>
+                            </div>
+                            <div class="col-10 my-auto">
+                                <a class="text-dark decoration-none"
+                                   href="{% url 'my_account:update_address' address.id %}"><h4
+                                        class="card-title pricing-card-title">{{ address.name }}</h4></a>
+                                <p>{{ address.city }}, {{ address.postal_code }}</p>
+                            </div>
+                            <div class="col-1 text-center mx-auto my-3">
+                                <a href="{% url 'my_account:delete_address' address.id %}"
+                                   class="btn btn-outline-danger btn-sm btn-md mb-2">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="col-12 text-center mx-auto py-3">
+            <a href="{% url 'my_account:new_address' %}"
+               class=" btn btn-outline-dark btn-filter rounded-pill px-2 py-2 me-1">Add
+                a new address</a>
+        </div>
+    </div>git
 {% endblock %}
