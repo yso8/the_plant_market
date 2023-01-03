@@ -121,6 +121,6 @@ STATIC_FILES_DIR = [BASE_DIR / 'store/static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-AUTH_USER_MODEL = 'account.Shopper'
+AUTH_USER_MODEL = 'store.Shopper'
 
 LOGIN_URL='/login/'
