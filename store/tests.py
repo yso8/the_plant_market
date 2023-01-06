@@ -1,5 +1,9 @@
 from django.test import TestCase
 from .models import Product, Category, Delivery, Shopper, Cart, CartProduct, Order, OrderProduct, OrderDetails
+from account.models import Address
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.webdriver import WebDriver
 
 
 class ProductModelTests(TestCase):
@@ -119,12 +123,60 @@ class OrderModelTests(TestCase):
         product3.save()
 
         # Create an order from the object in the cart
-        Order.objects.create(order=cart, price=100, user=user)
+        order = Order(order=cart, price=100, user=user)
+        order.save()
 
         # Populate the order with products
-        OrderProduct.objects.create()
-        OrderProduct.objects.create()
-        OrderProduct.objects.create()
+        OrderProduct.objects.create(product=product1, order_id=order, quantity=2)
+        OrderProduct.objects.create(product=product2, order_id=order, quantity=1)
+
+        # Create a delivery address for the user
+        address = Address(name="126 rue de Bugarelles", city="Montpellier", postal_code=34070, address_complement="",
+                          user=user)
+
+        # Create a carrier for the delivery
+        carrier = Delivery(name="DHL", price=10, time_days="1-2")
 
         # Populate the carrier and delivery method chosen
+        OrderDetails.objects.create(address=address, carrier=carrier, order=order, total=100)
 
+        # Make sure the data insert match the one from the database
+
+        get_order = Order.objects.get(order=cart)
+        self.assertEqual(get_order.id, order.id)
+
+        get_products = OrderProduct.objects.filter(order_id=get_order)
+        self.assertEqual(get_products[0].product.name, product1.name)
+        self.assertEqual(get_products[1].product.name, product2.name)
+        self.assertFalse(OrderProduct.objects.filter(id=3).exists())
+
+        # Check the delivery options
+        get_delivery = OrderDetails.objects.get(order=order)
+        self.assertEqual(get_delivery.address, "126 rue de Bugarelles")
+        self.assertEqual(get_delivery.carrier, "DHL : 10 1-2")
+
+        # self.assertEqual(Delivery.objects.get())
+
+
+# Functional tests
+class MySeleniumTests(StaticLiveServerTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_login(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/login/'))
+        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input.send_keys('louis')
+        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input.send_keys('root')
+        self.selenium.find_element(By.XPATH, '//button[text()="Login"]')
+
+    # def test_register(self):
