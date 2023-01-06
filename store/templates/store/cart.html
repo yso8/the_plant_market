@@ -79,18 +79,21 @@
                         {% endfor %}
                         </tbody>
                     </table>
+
+                    {% if errors %}
+                        {% for error in errors %}
+                            <p style="color: red"> {{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-6 text-muted">
                             Subtotal: {{ total }} €
                         </div>
 
-                        <div class="col-lg-6 col-md-6 col-6 d-flex flex-row-reverse">
-                            <form action="/cart/" method="POST">
-                                {% csrf_token %}
-                                <button class="btn btn-info"> Checkout </button>
-                            </form>
-                            <a href="{% url 'address_delivery_selection' %}" class="btn btn-sm btn-primary">Checkout</a>
-                        </div>
+                        <form action="/cart/" method="POST">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-primary mt-3"> Checkout</button>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-2 col-2"></div>

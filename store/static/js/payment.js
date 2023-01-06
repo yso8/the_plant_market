@@ -6,6 +6,8 @@ document.querySelector("#pay-button").addEventListener("click", event =>{
     let expiration_date = document.querySelector("#id_expiration_date").value;
     let cvv = document.querySelector("#id_cvv").value;
 
+    console.log(card_holder, card_number, expiration_date, cvv)
+
     formData.append('card_holder', card_holder);
     formData.append('card_number', card_number);
     formData.append('expiration_date', expiration_date);

@@ -63,16 +63,8 @@ def add_to_cart(request, slug):
 
 @login_required
 def cart(request):
-    if request.method == "POST":
-        print("Dans le post du cart")
-
-        # if some quantities are equal or inferior to 0, returns error
-
-        # else go to payment
-
     # get user cart
     get_cart = Cart.objects.get(user=request.user)
-
     cart_articles = CartProduct.objects.filter(user_cart=get_cart)
 
     # save the current products in cart to display them
@@ -89,13 +81,35 @@ def cart(request):
         # Calculate the price based on quantity and price
         total += get_product.price * i.quantity
 
+    if request.method == "POST":
+        # List used to store all the products where quantity asked is bigger than available
+        errors = []
+        for article in cart_articles:
+            print(article.quantity)
+            print(Product.objects.get(id=article.product.id).quantity)
+            # if some quantities are equal or inferior to 0, returns error and update quantity in cart
+            available_quantity = Product.objects.get(id=article.product.id).quantity
+            if article.quantity > available_quantity > 0:
+                article.quantity = available_quantity
+                article.save()
+                error_msg = f'The quantity asked for {article.product.name} is bigger than left: {available_quantity}'
+                errors.append(error_msg)
+            # If no items are left
+            elif available_quantity == 0:
+                article.delete()
+
+        # If all the quantity asked are available
+        if not errors:
+            return redirect('/cart/delivery')
+        else:
+            errors.append('Quantities have been automatically updated or remove to match those available')
+            return render(request, 'store/cart.html',
+                          context={"cart_articles": products, "quantities": cart_articles, "total": total,
+                                   "products_number": len(products), 'errors': errors})
+
     return render(request, 'store/cart.html',
                   context={"cart_articles": products, "quantities": cart_articles, "total": total,
                            "products_number": len(products)})
-
-
-def quantity_check():
-    print("Update quantity")
 
 
 @login_required
@@ -173,38 +187,40 @@ def select_delivery_method(request):
 
 @login_required
 def payment_method(request):
-    # load the form created in forms.py
+    if request.method == "POST":
+        print("Dans le form")
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            # Get the form data and process the data in another function
+            response = payment_check(form)
+            # If entered information are correct, create the order and return to the successful page
+            if response:
+                create_order(request.user)
+                return render(request, 'store/payment_successful.html')
+            else:
+                return render(request, 'store/payment.html', {'form': form, 'error': True})
 
-    if request == "POST":
-        payment_check()
-
+    # Load the form created in forms.py
     form = PaymentForm()
     return render(request, 'store/payment.html', {'form': form})
 
 
-def payment_check(request):
+def payment_check(form):
+    status = False
+    name = form.cleaned_data['name']
+    card = form.cleaned_data['card_number']
+    expiration = form.cleaned_data['expiration_date']
+    cvv = form.cleaned_data['cvv']
 
-    print("dans le paiement check")
-    holder = request.POST.get("card_holder")
-    number = request.POST.get("card_number")
-    expiration = request.POST.get("expiration_date")
-    cvv = request.POST.get("cvv")
-
-    print(holder)
-    print(number)
+    print(name)
+    print(card)
     print(expiration)
     print(cvv)
 
-    controller_response = ""
+    if name == "Admin admin" and card == '1234567812345678' and expiration == "01/23" and cvv == "123":
+        status = True
 
-    if holder and number and expiration and cvv:
-        result_check = cart_checker(holder, number, expiration, cvv)
-        if result_check:
-            controller_response = {"data": "success"}
-    else:
-        controller_response = {"data": "error"}
-
-    return JsonResponse(controller_response)
+    return status
 
 
 def cart_checker(holder, number, expiration, cvv):
@@ -217,6 +233,7 @@ def cart_checker(holder, number, expiration, cvv):
 
 def create_order(user):
     # create a new order
+    print(user)
     cart = Cart.objects.get(user=user)
     cart_products = CartProduct.objects.filter(user_cart=cart)
 
@@ -251,6 +268,7 @@ def payment_successful(request):
 
 def handle_not_found(request, exception):
     return render(request, 'error/404.html')
+
 
 @login_required
 def test_ajax(request):
