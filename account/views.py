@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views import generic
 from .models import Address, Shopper
-from store.models import Order, OrderProduct
+from store.models import Order, OrderProduct, Product
 from .forms import AddressForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -152,22 +152,16 @@ def account_address_delete(request, id):
 def account_order(request):
     get_orders = Order.objects.filter(user_id=request.user)
 
-    for order in get_orders:
-        get_orders_products = OrderProduct.objects.filter(order_id=order)
-        print(get_orders_products)
+    return render(request, 'account/user_orders.html', {"orders": get_orders})
 
-    orders = []
 
-    orders_dict = {
-        "order1": ["1", "2", "3"],
-    }
+@login_required
+def order_details(request, id):
+    # Get the order by its id and user connected to make sure to fetch only its orders
+    order = Order.objects.get(user=request.user, id=id)
+    ordered_products = OrderProduct.objects.filter(order_id=order)
 
-    print(orders_dict["order1"])
-
-    for t in get_orders:
-        print(t)
-
-    return render(request, 'account/user_orders.html', {"orders": orders_dict})
+    return render(request, 'account/user_order_details.html', {"products": ordered_products})
 
 
 @login_required

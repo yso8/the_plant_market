@@ -2,7 +2,8 @@ from django.urls import path
 
 # import all functions defined
 from . import views
-from .views import account_home, account_address, account_order, account_return, account_address_add, account_address_update,account_address_delete
+from .views import account_home, account_address, account_order, account_return, account_address_add, \
+    account_address_update,account_address_delete, order_details
 from django.contrib.auth import views as auth_views
 
 app_name = 'my_account'
@@ -14,6 +15,7 @@ urlpatterns = [
     path('account/address/update/<int:id>', account_address_update, name='update_address'),
     path('account/address/delete/<int:id>', account_address_delete, name='delete_address'),
     path('account/orders', account_order, name='orders'),
+    path('accounts/orders/<int:id>', order_details, name='order_details'),
     path('account/returns', account_return, name='returns'),
 
     path('password_change/done/',

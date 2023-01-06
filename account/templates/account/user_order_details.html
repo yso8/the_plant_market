@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="container">
+
+        <div class="orders-products">
+            {% for article in products %}
+                <div class="order_details_products">
+                    {{ article.product.name }}
+                    {{ article.quantity }}
+                    <br/>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}

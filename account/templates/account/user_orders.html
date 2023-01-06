@@ -8,9 +8,8 @@
 
         {% if orders %}
             {% for value in orders %}
-                {% for val in value %}
-                    <p> {{ val }}</p>
-                {% endfor %}
+                <a href="{% url 'my_account:order_details' value.id %}"> Order n° : {{ value.id }}</a>
+                <br/>
             {% endfor %}
 
         {% else %}
