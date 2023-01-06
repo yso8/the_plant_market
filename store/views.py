@@ -174,15 +174,26 @@ def select_delivery_method(request):
 @login_required
 def payment_method(request):
     # load the form created in forms.py
+
+    if request == "POST":
+        payment_check()
+
     form = PaymentForm()
     return render(request, 'store/payment.html', {'form': form})
 
 
 def payment_check(request):
+
+    print("dans le paiement check")
     holder = request.POST.get("card_holder")
     number = request.POST.get("card_number")
     expiration = request.POST.get("expiration_date")
     cvv = request.POST.get("cvv")
+
+    print(holder)
+    print(number)
+    print(expiration)
+    print(cvv)
 
     controller_response = ""
 
