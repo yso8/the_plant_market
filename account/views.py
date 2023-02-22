@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.views import generic
 from .models import Address, Shopper
+from store.models import Order, OrderProduct, Product
 from .forms import AddressForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -93,9 +94,14 @@ def account_address_add(request):
             address_complement = form.cleaned_data['address_complement']
             # check if address name already exists or not
             address = Address.objects.filter(name=name, user=request.user)
+
             if address:
-                error = True
-                return render(request, 'account/user_add_address.html', {'form': form, 'error': error})
+                error_address = True
+                return render(request, 'account/user_add_address.html', {'form': form, 'error_address': error_address})
+
+            if len(postal_code) < 5:
+                postal_error = True
+                return render(request, 'account/user_add_address.html', {'form': form, 'error_postal': postal_error})
             else:
                 address = Address(name=name, city=city,
                                   postal_code=postal_code, address_complement=address_complement, user=request.user)
@@ -143,7 +149,17 @@ def account_address_delete(request, id):
 
 @login_required
 def account_order(request):
-    return render(request, 'account/user_orders.html')
+    get_orders = Order.objects.filter(user_id=request.user)
+    return render(request, 'account/user_orders.html', {"orders": get_orders})
+
+
+@login_required
+def order_details(request, id):
+    # Get the order by its id and user connected to make sure to fetch only its orders
+    order = Order.objects.get(user=request.user, id=id)
+    ordered_products = OrderProduct.objects.filter(order_id=order)
+
+    return render(request, 'account/user_order_details.html', {"order": order, "products": ordered_products})
 
 
 @login_required

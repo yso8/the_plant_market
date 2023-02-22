@@ -1,63 +1,74 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="container">
-    <div class="">
-        <h3> Select payment method </h3>
+    <div class="container">
+        <main>
+            <div class="py-2 text-center">
+                <h2>your payment</h2>
+                <p class="lead">
+                    enter your payment information.
+                </p>
+                <hr class="my-2 custom-hr mx-auto">
+            </div>
+            <div class="row">
+                <div class="col-auto mx-auto">
+                    <form class="needs-validation" method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="form-label">Name on card</label>
+                                <input type="text" name="name"
+                                       class="form-control {% if error %} is-invalid {% endif %}" id="name"
+                                       placeholder="John Toe" autocomplete="off"
+                                       required>
+                                <small class="text-muted">Full name as displayed on card</small>
+                                <div class="invalid-feedback">
+                                    Name on card is required
+                                </div>
+                            </div>
 
-        <div>
-       <form action="/payment-check/" method="post">
-           {% csrf_token %}
-           <div class="container p-0">
-                <div class="card px-4">
-                    <p class="h8 py-3">Payment Details</p>
-                    <div class="row gx-3">
-                        <div class="col-12">
-                            <div class="d-flex flex-column">
-                                <p class="text mb-1">Person Name</p>
-                                {{form.name}}
+                            <div class="col-sm-6">
+                                <label class="form-label">Credit card number</label>
+                                <input type="text" name="card_number" class="form-control" id="card_number"
+                                       placeholder="123456789"
+                                       autocomplete="off" required>
+                                <div class="invalid-feedback">
+                                    Credit card number is required
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label">Expiration</label>
+                                <input type="text" name="expiration_date"
+                                       class="form-control {% if error_postal %} is-invalid {% endif %}"
+                                       id="expiration_date"
+                                       placeholder="01/23" autocomplete="off" required>
+                                <div class="invalid-feedback">
+                                    Expiration date required
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">CVV<span
+                                        class="text-muted"></span></label>
+                                <input type="text" name="cvv" class="form-control"
+                                       id="cvv" autocomplete="off" placeholder="123">
+                                <div class="invalid-feedback">
+                                    Security code required
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="d-flex flex-column">
-                                <p class="text mb-1">Card Number</p>
-                                {{form.card_number}}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="d-flex flex-column">
-                                <p class="text mb-1">Expiry</p>
-                                {{form.expiration_date}}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="d-flex flex-column">
-                                <p class="text mb-1">CVV</p>
-                                {{ form.cvv }}
-                            </div>
-                        </div>
-                        {%  if error %}
-                            <h3 style="color: red"> Vérifier les informations de votre cartre.</h3>
+                        {% if error %}
+                            <h3 class="error">Check your card information</h3>
                         {% endif %}
-                        <div class="col-12">
-                            <div class="">
-                                <button class="btn btn-info">Pay TOTAL</button>
-                                <span class="fas fa-arrow-right"></span>
-                            </div>
+                        <hr class="my-4">
+                        <div class="col-auto mx-auto text-center">
+                            <button class="btn btn-outline-dark btn-filter rounded-pill px-2 py-2 me-1" type="submit">Pay</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-       </form>
-
-        </div>
-
-        <div>
-            <div>
-                <h1> Paypal</h1>
-            </div>
-        </div>
+        </main>
     </div>
-</div>
 
 {% endblock %}

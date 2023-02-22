@@ -8,7 +8,7 @@
                 <div class="col-lg-8 col-md-8 col-8">
                     <h3 class="display-6 mb-2 text-center">Shopping Cart</h3>
                     <p class="mb-3 text-center">
-                        {{ orders|length }} item(s) in your cart
+                        {{ products_number }} item(s) in your cart
                     </p>
                     <table class="table table-condensed table-responsive">
                         <thead>
@@ -58,7 +58,7 @@
                                 </td>
                                 <td data-th="Quantity">
                                     <div class="mt-sm-2">
-                                        <p class="text-center">{{ cart_article.quantity }}</p>
+                                      <p class="text-center">{{ cart_article.quantity }}</p>
                                     </div>
                                 </td>
                                 <td class="actions">
@@ -72,14 +72,21 @@
                         {% endfor %}
                         </tbody>
                     </table>
+
+                    {% if errors %}
+                        {% for error in errors %}
+                            <p style="color: red"> {{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-6 text-muted">
-                            Subtotal: {{ total }}
+                            Subtotal: {{ total }} €
                         </div>
 
-                        <div class="col-lg-6 col-md-6 col-6 d-flex flex-row-reverse">
-                            <a href="{% url 'address_delivery_selection' %}" class="btn btn-sm btn-primary">Checkout</a>
-                        </div>
+                        <form action="/cart/" method="POST">
+                            {% csrf_token %}
+                            <button class="btn btn-sm btn-primary mt-3">Checkout</button>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-2 col-2"></div>

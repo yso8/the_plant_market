@@ -1,15 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+
 from phonenumber_field.formfields import PhoneNumberField
-from store.models import Product
-
-
-class Shopper(AbstractUser):
-    favorite = models.ManyToManyField(Product)
-
-
-class Rating(models.Model):
-    user = models.ManyToManyField(Shopper)
+from store.models import Shopper
 
 
 class Address(models.Model):

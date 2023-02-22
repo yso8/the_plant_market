@@ -20,7 +20,12 @@
                             {% if product.quantity != 0 %}
                                 <a href="{% url 'add-to-cart' product.slug %}" class="btn btn-sm btn-outline-success mt-2 me-2" ><i class="bi bi-bag-plus"></i>&nbsp;Add To Cart</a>
                             {% endif %}
-                            <a href="{% url 'add-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger mt-2 me-2" ><i class="bi bi-suit-heart-fill"></i>&nbsp;Add To Favorite</a>
+
+                            {% if is_favorite %}
+                                <a href="{% url 'remove-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger mt-2 me-2" ><i class="bi bi-suit-heart-fill"></i>&nbsp;Remove To Favorite</a>
+                            {% else %}
+                                <a href="{% url 'add-to-favorite' product.id %}" class="btn btn-sm btn-outline-danger mt-2 me-2" ><i class="bi bi-suit-heart"></i>&nbsp;Add To Favorite</a>
+                            {% endif %}
                         </div>
                         {% endif %}
                     </div>

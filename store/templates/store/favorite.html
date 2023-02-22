@@ -2,16 +2,27 @@
 {% block content %}
 
 <div class="container">
-    <div class="">
-        <h3> My favorite products </h3>
-        <div>
-            {% for favorite in favorites %}
-                <div>
-                    {{ favorite }}
-                </div>
-            {% endfor %}
-        </div>
+    <div class="text-center px-4 py-2">
+        <h2>your favorite products</h2>
+        <p class="lead">
+            all your favorite products in one place.
+        </p>
+        <hr class="my-2 custom-hr mx-auto">
     </div>
+
+    <div class="row text-center">
+        {% for favorite in favorites %}
+        <div class="col-auto col-lg-auto mx-auto">
+            <a href="{% url 'product_detail' favorite.slug %}">
+                <img class="bd-placeholder-img rounded-circle" width="140" height="140" src="{{ favorite.picture.url }}"
+                     role="img">
+            </a>
+            <h6>{{ favorite.name }}</h6>
+        </div>
+        {% endfor %}
+    </div>
+
+
 </div>
 
 {% endblock %}

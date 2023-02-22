@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-
+from django.contrib.auth.models import AbstractUser
 from shop.settings import AUTH_USER_MODEL
 
 
@@ -25,6 +25,10 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse("product_detail", kwargs={"slug": self.slug})
+
+
+class Shopper(AbstractUser):
+    favorite = models.ManyToManyField(Product)
 
 
 class Delivery(models.Model):
@@ -52,13 +56,13 @@ class CartProduct(models.Model):
 
 
 class Order(models.Model):
-    order = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    order = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
     price = models.FloatField()
     user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
 class OrderProduct(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
