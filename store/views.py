@@ -15,7 +15,7 @@ def index(request):
     # get all the filters which are the category of the products
     filters = Category.objects.all()
 
-    if Shopper.is_authenticated:
+    if request.user.is_authenticated:
         favorites = request.user.favorite.all()
         return render(request, 'store/index.html', context={"products": products, "filters": filters, "favorites": favorites})
 
@@ -34,12 +34,15 @@ def product_detail(request, slug):
     # get only the information about the selected product
     product = get_object_or_404(Product, slug=slug)
 
-    is_favorite = False
-    for i in request.user.favorite.all():
-        if i == product:
-            is_favorite = True
-
-    return render(request, 'store/product_detail.html', context={"product": product, "is_favorite": is_favorite})
+    if request.user.is_authenticated:
+        is_favorite = False
+        for i in request.user.favorite.all():
+            if i == product:
+                is_favorite = True
+                
+        return render(request, 'store/product_detail.html', context={"product": product, "is_favorite": is_favorite})
+    
+    return render(request, 'store/product_detail.html', context={"product": product})
 
 
 @login_required
