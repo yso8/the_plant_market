@@ -1,4 +1,2 @@
 /env
-/account/__pycache
-/shop/__pycache
-/store/__pycache
+__pycache__/
