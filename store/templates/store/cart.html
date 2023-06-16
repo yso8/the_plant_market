@@ -43,17 +43,17 @@
                                 <td data-th="Product">
                                     <div class="row">
                                         <div class="col-md-3 text-left">
-                                            <img width="30" height="30" src="{{ cart_article.picture.url }}" alt=""
+                                            <img width="30" height="30" src="{{ cart_article.product.picture.url }}" alt=""
                                                  class="img-fluid d-none d-md-block rounded mb-2 shadow ">
                                         </div>
                                         <div class="col-md-9 mt-sm-2">
-                                            {{ cart_article.name }}{{ org }}
+                                            {{ cart_article.product.name }}{{ org }}
                                         </div>
                                     </div>
                                 </td>
                                 <td data-th="Price">
                                     <div class="mt-sm-2">
-                                        <p class="text-center">${{ cart_article.price }}</p>
+                                        <p class="text-center">${{ cart_article.product.price }}</p>
                                     </div>
                                 </td>
                                 <td data-th="Quantity">
@@ -70,7 +70,7 @@
                                 </td>
                                 <td class="actions">
                                     <div class="mt-sm-2 text-center">
-                                        <a href="{% url 'delete-product-to-cart' cart_article.slug %}" class="btn btn-outline-danger btn-sm btn-md mb-2">
+                                        <a href="{% url 'delete-product-to-cart' cart_article.product.slug %}" class="btn btn-outline-danger btn-sm btn-md mb-2">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </div>
@@ -87,7 +87,7 @@
                     {% endif %}
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-6 text-muted">
-                            Subtotal: {{ total }} €
+                            Subtotal: {{ total|floatformat:2 }} €
                         </div>
 
                         <form action="/cart/" method="POST">

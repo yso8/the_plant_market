@@ -49,6 +49,27 @@ class Cart(models.Model):
         return self.user.username
 
 
+    def getUserCartAndProducts(user):
+        get_cart = Cart.objects.get(user=user)
+        cart_articles = CartProduct.objects.filter(user_cart=get_cart)
+        return cart_articles
+
+
+    def getTotalCartPrice(user):
+        cart_articles = Cart.getUserCartAndProducts(user)
+        total = 0
+        for i in cart_articles:
+            # Get the product to access its value price
+            get_product = Product.objects.get(id=i.product_id)
+            get_product.quantity = i.quantity
+            # Calculate the price based on quantity and price
+            total += get_product.price * i.quantity
+        return total
+
+    def getProductsLength(cart_articles):
+        return len(cart_articles)
+
+
 class CartProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
