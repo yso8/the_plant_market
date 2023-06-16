@@ -2,7 +2,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from store.views import index, product_detail, add_to_cart, cart, delete_cart, \
-    delete_product_to_cart, add_to_favorite, select_delivery_method, payment_method, payment_check, filter_products, \
+    delete_product_to_cart, add_to_favorite, remove_to_favorite, select_delivery_method, payment_method, filter_products, \
     show_favorite, payment_successful, test_ajax
 from account.views import signup, logout_user, login_user
 from shop import settings
@@ -19,6 +19,7 @@ urlpatterns = [
                   path('product/<str:slug>/add-to-cart/', add_to_cart, name='add-to-cart'),
                   path('favorite/', show_favorite, name="show-favorite"),
                   path('favorite/<int:id>/add', add_to_favorite, name="add-to-favorite"),
+                  path('favorite/<int:id>/remove', remove_to_favorite, name="remove-to-favorite"),
                   path('cart/', cart, name="cart"),
                   path('add-to-cart/<str:slug>/', add_to_cart, name="add-to-cart"),
                   path('cart/delete-product/<str:slug>/', delete_product_to_cart, name="delete-product-to-cart"),

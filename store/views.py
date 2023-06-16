@@ -14,6 +14,11 @@ def index(request):
     products = Product.objects.all()
     # get all the filters which are the category of the products
     filters = Category.objects.all()
+
+    if request.user.is_authenticated:
+        favorites = request.user.favorite.all()
+        return render(request, 'store/index.html', context={"products": products, "filters": filters, "favorites": favorites})
+
     return render(request, 'store/index.html', context={"products": products, "filters": filters})
 
 
@@ -28,6 +33,15 @@ def filter_products(request, filter):
 def product_detail(request, slug):
     # get only the information about the selected product
     product = get_object_or_404(Product, slug=slug)
+
+    if request.user.is_authenticated:
+        is_favorite = False
+        for i in request.user.favorite.all():
+            if i == product:
+                is_favorite = True
+                
+        return render(request, 'store/product_detail.html', context={"product": product, "is_favorite": is_favorite})
+    
     return render(request, 'store/product_detail.html', context={"product": product})
 
 
@@ -40,23 +54,31 @@ def add_to_cart(request, slug):
         get_cart = Cart.objects.get(user=request.user)
 
         get_product_cart = ""
-
         try:
             get_product_cart = CartProduct.objects.get(product=product)
         except CartProduct.DoesNotExist:
-            add_article = CartProduct(product=product, quantity=1, user_cart=get_cart)
-            add_article.save()
+            if product.quantity - 1 >= 0:
+                add_article = CartProduct(product=product, quantity=1, user_cart=get_cart)
+                add_article.save()
+            else:
+                return render(request, 'store/index.html', {'error': True})
 
         # if product is already in the cart, add one to the quantity
         if get_product_cart:
-            get_product_cart.quantity += 1
-            get_product_cart.save()
+            if product.quantity - 1 >= 0:
+                get_product_cart.quantity += 1
+                get_product_cart.save()
+            else:
+                return render(request, 'store/index.html', {'error': True})
 
     except Cart.DoesNotExist:
         create_cart = Cart(user=request.user)
         create_cart.save()
-        add_product = CartProduct(product=product, quantity=1, user_cart=create_cart)
-        add_product.save()
+        if product.quantity - 1 >= 0:
+            add_article = CartProduct(product=product, quantity=1, user_cart=create_cart)
+            add_article.save()
+        else:
+            return render(request, 'store/index.html', {'error': True})
 
     return redirect(reverse("product_detail", kwargs={"slug": slug}))
 
@@ -85,8 +107,11 @@ def cart(request):
         # List used to store all the products where quantity asked is bigger than available
         errors = []
         for article in cart_articles:
+<<<<<<< HEAD
             print(article.quantity)
             print(Product.objects.get(id=article.product.id).quantity)
+=======
+>>>>>>> main
             # if some quantities are equal or inferior to 0, returns error and update quantity in cart
             available_quantity = Product.objects.get(id=article.product.id).quantity
             if article.quantity > available_quantity > 0:
@@ -122,9 +147,23 @@ def add_to_favorite(request, id):
     user.favorite.add(product)
 
     return redirect('index')
+<<<<<<< HEAD
 
     # check if product is already in favorite
+=======
+>>>>>>> main
 
+
+@login_required
+def remove_to_favorite(request, id):
+    # get the product selected by user
+    product = Product.objects.get(id=id)
+
+    # get the current user
+    user = Shopper.objects.get(id=request.user.id)
+    user.favorite.remove(product)
+
+    return redirect('index')
 
 @login_required
 def show_favorite(request):
@@ -160,27 +199,30 @@ def delete_product_to_cart(request, slug):
 
 @login_required
 def select_delivery_method(request):
-    if request.method == 'POST':
-        # get selected address and carrier from the form
-        address_name = request.POST.get("flexAddress")
-        carrier_name = request.POST.get("flexCarrier")
-        print(carrier_name)
-
-        # set carrier and delivery address
-        cart = Cart.objects.get(user=request.user)
-        carrier = Delivery.objects.get(id=carrier_name)
-        print(address_name)
-        cart.address = address_name
-        cart.carrier = carrier.id
-        cart.save()
-
-        # update total price
-
-        # redirect to the payment page
-        return HttpResponseRedirect('/payment')
-
+    # if we still need his information
     addresses = Address.objects.filter(user=request.user)
     deliveries = Delivery.objects.all()
+
+    if request.method == 'POST':
+        if request.POST.get("flexAddress") and request.POST.get("flexCarrier"):
+            # get selected address and carrier from the form
+            address_name = request.POST.get("flexAddress")
+            carrier_name = request.POST.get("flexCarrier")
+
+            # set carrier and delivery address
+            cart = Cart.objects.get(user=request.user)
+            carrier = Delivery.objects.get(id=carrier_name)
+            cart.address = address_name
+            cart.carrier = carrier.id
+            cart.save()
+
+            # redirect to the payment page
+            return HttpResponseRedirect('/payment')
+        else:
+            return render(request, 'store/address_delivery_selector.html', {'addresses': addresses,
+                                                                            'deliveries': deliveries,
+                                                                            'error': True})
+
     return render(request, 'store/address_delivery_selector.html', context={"addresses": addresses,
                                                                             "deliveries": deliveries})
 
@@ -188,11 +230,26 @@ def select_delivery_method(request):
 @login_required
 def payment_method(request):
     if request.method == "POST":
+<<<<<<< HEAD
         print("Dans le form")
         form = PaymentForm(request.POST)
         if form.is_valid():
             # Get the form data and process the data in another function
             response = payment_check(form)
+=======
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            response = False
+            name = form.cleaned_data['name']
+            card = form.cleaned_data['card_number']
+            expiration = form.cleaned_data['expiration_date']
+            cvv = form.cleaned_data['cvv']
+
+            # get the cart
+            if name == "John Toe" and card == '123456789' and expiration == "01/23" and cvv == "123":
+                response = True
+
+>>>>>>> main
             # If entered information are correct, create the order and return to the successful page
             if response:
                 create_order(request.user)
@@ -205,6 +262,7 @@ def payment_method(request):
     return render(request, 'store/payment.html', {'form': form})
 
 
+<<<<<<< HEAD
 def payment_check(form):
     status = False
     name = form.cleaned_data['name']
@@ -228,6 +286,12 @@ def cart_checker(holder, number, expiration, cvv):
     if holder == 'Admin admin' and number == '1234567812345678' and expiration == '01/23' and cvv == 123:
         return_val = True
     print(return_val)
+=======
+def cart_checker(holder, number, expiration, cvv):
+    return_val = False
+    if holder == 'test test' and number == '123456789' and expiration == '01/23' and cvv == 123:
+        return_val = True
+>>>>>>> main
     return return_val
 
 
@@ -237,7 +301,16 @@ def create_order(user):
     cart = Cart.objects.get(user=user)
     cart_products = CartProduct.objects.filter(user_cart=cart)
 
+<<<<<<< HEAD
     order = Order(order=cart, price=10, user=user)
+=======
+    # get the total price
+    total = 0
+    for product in cart_products:
+        total += product.product.price * product.quantity
+
+    order = Order(order=cart, price=total, user=user)
+>>>>>>> main
     order.save()
     print(order.order_id)
     order_details = OrderDetails(address=cart.address, carrier=cart.carrier, order=order, total=100)
@@ -272,7 +345,11 @@ def handle_not_found(request, exception):
 
 @login_required
 def test_ajax(request):
+<<<<<<< HEAD
     print("Dans tets ajax")
+=======
+    print("Dans test ajax")
+>>>>>>> main
     jsonData = json.loads(request.body)
     dataReceived = jsonData.get('selectedProduct')
     return JsonResponse({"Donnée bien reçue": dataReceived})

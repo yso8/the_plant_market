@@ -6,3 +6,22 @@
     border-radius: 25%;
     border: solid deepskyblue;
 }
+
+.btn-filter {
+    text-decoration: none;
+    padding: 2% 20%;
+    border-radius: 25%;
+    font-family: Poppins;
+    padding-left: 5vmin !important;
+    padding-right: 5vmin !important;
+}
+
+.custom-hr {
+    width: 40% !important;
+}
+
+.error{
+    color: red;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+}

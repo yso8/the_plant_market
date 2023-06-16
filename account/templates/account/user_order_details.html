@@ -2,18 +2,88 @@
 {% load static %}
 {% block content %}
 
-    <div class="container">
+    <section class="pt-3 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-2 col-2"></div>
+                <div class="col-lg-8 col-md-8 col-8">
+                    <h3 class="display-6 mb-2 text-center">Order #{{ order.id }}</h3>
+                    <p class="mb-3 text-center">
+                        {{ products.count }} item(s) in your cart
+                    </p>
+                    <table class="table table-condensed table-responsive">
+                        <thead>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-9 mt-sm-2">
+                                        <p class="center"><b>Product</b></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mt-sm-2">
+                                    <p class="text-center"><b>Price</b></p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mt-sm-2">
+                                    <p class="text-center"><b>Quantity</b></p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mt-sm-2">
+                                    <p class="text-center"><b>Actions</b></p>
+                                </div>
+                            </td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td data-th="Product">
+                                    <div class="row">
+                                        <div class="col-md-9 mt-sm-2">
+                                            {{ product.product.name }}{{ org }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-th="Price">
+                                    <div class="mt-sm-2">
+                                        <p class="text-center">${{ product.product.price }}</p>
+                                    </div>
+                                </td>
+                                <td data-th="Quantity">
+                                    <div class="mt-sm-2">
+                                        <p class="text-center">{{ product.quantity }}</p>
+                                    </div>
+                                </td>
+                                <td class="actions">
+                                    <div class="mt-sm-2 text-center">
+                                        <a href="{% url 'product_detail' product.product.slug %}"
+                                           class="btn btn-outline-primary btn-sm btn-md mb-2">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
 
-        <div class="orders-products">
-            {% for article in products %}
-                <div class="order_details_products">
-                    {{ article.product.name }}
-                    {{ article.quantity }}
-                    <br/>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-6 text-muted">
+                            Subtotal: {{ order.price }} €
+                        </div>
+                    </div>
+                    <div class="col-lg-auto text-center mx-auto">
+                        <a href="{% url 'my_account:orders' %}" class="btn btn-outline-dark btn-filter rounded-pill px-2 py-2 mt-2 me-1">← Return to your
+                            orders</a>
+                    </div>
                 </div>
-            {% endfor %}
+                <div class="col-lg-2 col-md-2 col-2"></div>
+            </div>
         </div>
-
-    </div>
+    </section>
 
 {% endblock %}

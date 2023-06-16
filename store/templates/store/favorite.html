@@ -13,6 +13,20 @@
             {% endfor %}
         </div>
     </div>
+
+    <div class="row text-center">
+        {% for favorite in favorites %}
+        <div class="col-auto col-lg-auto mx-auto">
+            <a href="{% url 'product_detail' favorite.slug %}">
+                <img class="bd-placeholder-img rounded-circle" width="140" height="140" src="{{ favorite.picture.url }}"
+                     role="img">
+            </a>
+            <h6>{{ favorite.name }}</h6>
+        </div>
+        {% endfor %}
+    </div>
+
+
 </div>
 
 {% endblock %}

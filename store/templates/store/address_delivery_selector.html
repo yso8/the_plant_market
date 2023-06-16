@@ -1,33 +1,74 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="container">
-    <div class="">
-        <h3> Select a delivery address</h3>
+    <div class="container">
+        <div class="text-center px-4 py-2">
+            <h2>your delivery informations</h2>
+            <p class="lead">
+                select a delivery address.
+            </p>
+            <hr class="my-2 custom-hr mx-auto">
+        </div>
+        <div class="row">
+            <form action="/cart/delivery" method="post">
+                {% csrf_token %}
 
-        <form action="/cart/delivery" method="post">
-        {% csrf_token %}
-        {% if addresses %}
-            <div class="addresses">
-            {% for address in addresses %}
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexAddress" id="flexRadioDefault1" value="{{ address.name }}">
-                    <label class="form-check-label" for="flexRadioDefault1"> {{ address.name }} </label>
+                {% if addresses %}
+                    <div class="col-lg-6 mx-auto">
+                        {% for address in addresses %}
+                            <div class="card my-1">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="flexAddress"
+                                           id="flexRadioDefault1"
+                                           value="{{ address.id }}">
+                                    <label class="form-check-label" for=""><h5
+                                            class="card-title">{{ address.name }}</h5></label>
+                                    <p class="card-text">{{ address.postal_code }}, {{ address.city }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="col-auto text-center mx-auto">
+                        <p>you don't have address, yet</p>
+                        <a href="{% url 'my_account:new_address' %}"
+                           class=" btn btn-outline-dark btn-filter rounded-pill px-2 py-2 me-1">
+                            Add a new address
+                        </a>
+                    </div>
+                {% endif %}
+
+                <div class="text-center px-4 py-2">
+                    <p class="lead">
+                        select a delivery carrier.
+                    </p>
+                    <hr class="my-2 custom-hr mx-auto">
                 </div>
-            {% endfor %}
-            </div>
-        {% else %}
-            <a href="{% url 'my_account:new_address' %}" class="btn btn-info"> Add a new address </a>
-        {% endif %}
-    <div class="">
-        <h3> Select a delivery carrier </h3>
-        <div>
-        {% for delivery in deliveries %}
-                <div class="form-check" style="background-color: azure; margin-bottom: 0.2rem">
-                    <input class="form-check-input" type="radio" name="flexCarrier" id="flexRadioDefault1" value="{{ delivery.id }}">
-                    <label class="form-check-label" for="flexRadioDefault1"> {{ delivery.name }} <br>{{ delivery.price }}€ <br>{{ delivery.time_days }} days</label>
+                <div class="col-lg-6 mx-auto">
+                    {% for delivery in deliveries %}
+                        <div class="card my-1">
+                            <div class="card-body">
+                                <input class="form-check-input" type="radio" name="flexCarrier"
+                                       id="flexRadioDefault1"
+                                       value="{{ delivery.id }}">
+                                <label class="form-check-label" for=""><h5
+                                        class="card-title">{{ delivery.name }} : {{ delivery.price }}$</h5></label>
+                                <p class="card-text">{{ delivery.time_days }} days of deliveries</p>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-        {% endfor %}
+                {% if error %}
+                    <div class="mx-auto text-center my-1">
+                        <p class="error">Please complete the form correctly</p>
+                    </div>
+                {% endif %}
+                <div class="col-12 text-center mx-auto my-2">
+                    <button class="btn btn-outline-dark btn-filter rounded-pill px-2 py-2 me-1">
+                        Go to payment
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
         <button class="btn btn-info"> Go to pay </button>

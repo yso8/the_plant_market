@@ -100,7 +100,7 @@ def account_address_add(request):
                 error_address = True
                 return render(request, 'account/user_add_address.html', {'form': form, 'error_address': error_address})
 
-            if postal_code != 5:
+            if len(postal_code) < 5:
                 postal_error = True
                 return render(request, 'account/user_add_address.html', {'form': form, 'error_postal': postal_error})
             else:
@@ -151,7 +151,6 @@ def account_address_delete(request, id):
 @login_required
 def account_order(request):
     get_orders = Order.objects.filter(user_id=request.user)
-
     return render(request, 'account/user_orders.html', {"orders": get_orders})
 
 
@@ -161,7 +160,7 @@ def order_details(request, id):
     order = Order.objects.get(user=request.user, id=id)
     ordered_products = OrderProduct.objects.filter(order_id=order)
 
-    return render(request, 'account/user_order_details.html', {"products": ordered_products})
+    return render(request, 'account/user_order_details.html', {"order": order, "products": ordered_products})
 
 
 @login_required
