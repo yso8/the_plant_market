@@ -70,6 +70,17 @@
             </div>
        </form>
 
+       <hr/>
+        <div class="col-auto mx-auto text-center">
+            <form
+            class="needs-validation"
+           action="{% url 'create-checkout-session'%}"
+          method="POST"
+        >
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-dark btn-filter rounded-pill px-2 py-2 me-1">Pay with Stripe</button>
+        </form>
+        </div>
         </div>
 
     </div>

@@ -7,7 +7,11 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import PaymentForm
 import json
-
+import stripe
+from django.views import View
+from django.conf import settings
+from django.views.generic.base import TemplateView
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def index(request):
     # get all the products in the database
@@ -298,3 +302,45 @@ def test_ajax(request):
     jsonData = json.loads(request.body)
     dataReceived = jsonData.get('selectedProduct')
     return JsonResponse({"Donnée bien reçue": dataReceived})
+
+
+class CreateStripeCheckoutSessionView(View):
+    """
+    Create a checkout session and redirect the user to Stripe's checkout page
+    """
+
+    def post(self, request, *args, **kwargs):
+        print(request.user)
+        cart_articles = Cart.getUserCartAndProducts(request.user)
+
+        # initialize the total cost of the cart before shipping fees
+        total = Cart.getTotalCartPrice(request.user)
+        price = CartProduct.objects.all()
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "eur",
+                        "unit_amount": int(total) * 100,
+                        "product_data": {
+                            "name": "Cart products",
+                            "description": "Some products to buy !",
+                        },
+                    },
+                    "quantity": "1",
+                }
+            ],
+            mode="payment",
+            success_url=settings.PAYMENT_SUCCESS_URL,
+            cancel_url=settings.PAYMENT_CANCEL_URL,
+        )
+        return redirect(checkout_session.url)
+
+
+class SuccessView(TemplateView):
+    template_name = "store/success.html"
+
+class CancelView(TemplateView):
+    template_name = "store/cancel.html"
