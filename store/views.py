@@ -39,9 +39,9 @@ def product_detail(request, slug):
         for i in request.user.favorite.all():
             if i == product:
                 is_favorite = True
-                
+
         return render(request, 'store/product_detail.html', context={"product": product, "is_favorite": is_favorite})
-    
+
     return render(request, 'store/product_detail.html', context={"product": product})
 
 
@@ -57,7 +57,8 @@ def add_to_cart(request, slug):
             get_product_cart = CartProduct.objects.get(product=product)
         except CartProduct.DoesNotExist:
             if product.quantity - 1 >= 0:
-                add_article = CartProduct(product=product, quantity=1, user_cart=get_cart)
+                add_article = CartProduct(
+                    product=product, quantity=1, user_cart=get_cart)
                 add_article.save()
             else:
                 return render(request, 'store/index.html', {'error': True})
@@ -74,7 +75,8 @@ def add_to_cart(request, slug):
         create_cart = Cart(user=request.user)
         create_cart.save()
         if product.quantity - 1 >= 0:
-            add_article = CartProduct(product=product, quantity=1, user_cart=create_cart)
+            add_article = CartProduct(
+                product=product, quantity=1, user_cart=create_cart)
             add_article.save()
         else:
             return render(request, 'store/index.html', {'error': True})
@@ -107,7 +109,8 @@ def cart(request):
         errors = []
         for article in cart_articles:
             # if some quantities are equal or inferior to 0, returns error and update quantity in cart
-            available_quantity = Product.objects.get(id=article.product.id).quantity
+            available_quantity = Product.objects.get(
+                id=article.product.id).quantity
             if article.quantity > available_quantity > 0:
                 article.quantity = available_quantity
                 article.save()
@@ -121,7 +124,8 @@ def cart(request):
         if not errors:
             return redirect('/cart/delivery')
         else:
-            errors.append('Quantities have been automatically updated or remove to match those available')
+            errors.append(
+                'Quantities have been automatically updated or remove to match those available')
             return render(request, 'store/cart.html',
                           context={"cart_articles": products, "quantities": cart_articles, "total": total,
                                    "products_number": len(products), 'errors': errors})
@@ -154,6 +158,7 @@ def remove_to_favorite(request, id):
 
     return redirect('index')
 
+
 @login_required
 def show_favorite(request):
     # load all the favorites from the logged user
@@ -180,7 +185,8 @@ def delete_cart(request):
 def delete_product_to_cart(request, slug):
     product = Product.objects.get(slug=slug)
     get_cart = Cart.objects.get(user_id=request.user.id)
-    cart_products = CartProduct.objects.get(user_cart=get_cart, product_id=product.id)
+    cart_products = CartProduct.objects.get(
+        user_cart=get_cart, product_id=product.id)
     cart_products.delete()
 
     return redirect('/cart')
@@ -262,12 +268,14 @@ def create_order(user):
 
     order = Order(order=cart, price=total, user=user)
     order.save()
-    order_details = OrderDetails(address=cart.address, carrier=cart.carrier, order=order, total=100)
+    order_details = OrderDetails(
+        address=cart.address, carrier=cart.carrier, order=order, total=100)
     order_details.save()
 
     for i in cart_products:
         product = Product.objects.get(id=i.product_id)
-        add_product_order = OrderProduct(product=product, order_id=order, quantity=i.quantity)
+        add_product_order = OrderProduct(
+            product=product, order_id=order, quantity=i.quantity)
         add_product_order.save()
         update_products_quantity(product, i.quantity)
 
